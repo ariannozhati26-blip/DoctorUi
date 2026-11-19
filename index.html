@@ -1,0 +1,1249 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>سامانه نوبت‌دهی پزشکان</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+:root {
+  --primary:#176b87;
+  --primary-dark:#104e66;
+  --secondary:#22a699;
+  --bg:#f4f7fb;
+  --white:#fff;
+  --text:#172b3a;
+  --muted:#80909e;
+  --border:#e8edf2;
+  --danger:#e45b68;
+  --success:#20a779;
+  --shadow:0 8px 30px rgba(27,65,90,.07);
+}
+
+* {box-sizing:border-box;margin:0;padding:0}
+
+body {
+  font-family:'Vazirmatn',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+}
+
+button,input,textarea,select {font-family:inherit}
+button {cursor:pointer;border:0}
+
+.layout {display:flex;min-height:100vh}
+
+.sidebar {
+  width:255px;
+  background:#102d40;
+  color:white;
+  padding:25px 17px;
+  position:fixed;
+  right:0;top:0;bottom:0;
+  z-index:10;
+  display:flex;
+  flex-direction:column;
+}
+
+.logo {
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:10px 8px 30px;
+  font-size:19px;
+  font-weight:800;
+}
+
+.logo-icon {
+  width:42px;height:42px;
+  border-radius:13px;
+  background:var(--secondary);
+  display:grid;place-items:center;
+  font-size:21px;
+}
+
+.menu-title {
+  color:#7895a7;
+  font-size:11px;
+  padding:10px;
+  margin-top:10px;
+}
+
+.nav-btn {
+  width:100%;
+  background:transparent;
+  color:#c2d1da;
+  text-align:right;
+  padding:13px 14px;
+  border-radius:10px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin:4px 0;
+  transition:.2s;
+  font-size:13px;
+}
+
+.nav-btn:hover,.nav-btn.active {
+  background:#1c455a;
+  color:white;
+}
+
+.nav-btn.active {border-right:3px solid #36c6ad}
+
+.sidebar-bottom {margin-top:auto}
+.sidebar-bottom button {color:#a9c0ce}
+
+.main {
+  margin-right:255px;
+  width:calc(100% - 255px);
+  padding:25px 35px;
+}
+
+.topbar {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:30px;
+  gap:15px;
+}
+
+.page-title h1 {font-size:23px;font-weight:800}
+.page-title p {color:var(--muted);font-size:12px;margin-top:5px}
+
+.top-actions {display:flex;align-items:center;gap:12px}
+
+.mode-switch {
+  display:flex;
+  background:white;
+  border:1px solid var(--border);
+  padding:5px;
+  border-radius:12px;
+}
+
+.mode-switch button {
+  padding:9px 13px;
+  background:transparent;
+  border-radius:8px;
+  color:var(--muted);
+  font-size:12px;
+}
+
+.mode-switch button.active {
+  background:var(--primary);
+  color:white;
+}
+
+.avatar {
+  width:42px;height:42px;
+  border-radius:50%;
+  background:#d9f0ec;
+  color:var(--primary);
+  display:grid;place-items:center;
+  font-size:18px;
+}
+
+.section {display:none}
+.section.active {display:block}
+
+.stats {
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:17px;
+  margin-bottom:25px;
+}
+
+.stat-card {
+  background:white;
+  border-radius:15px;
+  padding:20px;
+  box-shadow:var(--shadow);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+
+.stat-card p {color:var(--muted);font-size:12px}
+.stat-card h2 {font-size:26px;margin-top:8px}
+.stat-icon {
+  width:48px;height:48px;
+  border-radius:14px;
+  display:grid;place-items:center;
+  font-size:20px;
+}
+
+.blue {background:#e4f2fa;color:#2584b4}
+.green {background:#e3f7ef;color:#20a779}
+.orange {background:#fff1df;color:#e79a39}
+.purple {background:#f0eafe;color:#8762d5}
+
+.panel {
+  background:white;
+  border-radius:16px;
+  padding:22px;
+  box-shadow:var(--shadow);
+  margin-bottom:22px;
+}
+
+.panel-header {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  margin-bottom:20px;
+}
+
+.panel-header h3 {font-size:16px}
+
+.btn {
+  padding:10px 17px;
+  border-radius:9px;
+  font-size:12px;
+  display:inline-flex;
+  gap:8px;
+  align-items:center;
+  justify-content:center;
+  transition:.2s;
+}
+
+.btn-primary {background:var(--primary);color:white}
+.btn-primary:hover {background:var(--primary-dark)}
+.btn-light {background:#edf4f7;color:var(--primary)}
+.btn-danger {background:#fff0f1;color:var(--danger)}
+.btn-success {background:#e4f8ef;color:var(--success)}
+
+.search-box {
+  display:flex;
+  align-items:center;
+  gap:10px;
+  background:#f6f8fa;
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:0 13px;
+  width:260px;
+}
+
+.search-box input {
+  border:0;outline:0;
+  background:transparent;
+  padding:11px 0;
+  width:100%;
+  font-size:12px;
+}
+
+.table-wrap {overflow-x:auto}
+
+table {width:100%;border-collapse:collapse;white-space:nowrap}
+th {
+  color:var(--muted);
+  font-size:11px;
+  font-weight:500;
+  text-align:right;
+  padding:13px 10px;
+  border-bottom:1px solid var(--border);
+}
+
+td {
+  font-size:12px;
+  padding:15px 10px;
+  border-bottom:1px solid #f0f2f5;
+}
+
+.doctor-cell {display:flex;align-items:center;gap:10px}
+.doctor-avatar {
+  width:37px;height:37px;
+  border-radius:11px;
+  display:grid;place-items:center;
+  background:#e6f2f5;color:var(--primary);
+  font-size:17px;
+}
+
+.badge {
+  padding:5px 9px;
+  border-radius:20px;
+  font-size:10px;
+}
+.badge-green {background:#e4f8ef;color:#179b6e}
+.badge-red {background:#fff0f1;color:#df5c67}
+
+.actions {display:flex;gap:6px}
+
+.icon-btn {
+  width:31px;height:31px;
+  border-radius:8px;
+  background:#f0f4f7;
+  color:var(--primary);
+}
+.icon-btn.delete {background:#fff0f1;color:var(--danger)}
+
+.empty {
+  text-align:center;
+  padding:35px;
+  color:var(--muted);
+  font-size:13px;
+}
+
+.doctor-grid {
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:18px;
+}
+
+.doctor-card {
+  background:white;
+  padding:20px;
+  border-radius:16px;
+  box-shadow:var(--shadow);
+  transition:.2s;
+  border:1px solid transparent;
+}
+
+.doctor-card:hover {
+  transform:translateY(-3px);
+  border-color:#c9e5e9;
+}
+
+.doctor-card-top {
+  display:flex;
+  gap:13px;
+  align-items:center;
+  margin-bottom:15px;
+}
+
+.big-avatar {
+  width:58px;height:58px;
+  background:#e2f2f4;
+  color:var(--primary);
+  display:grid;place-items:center;
+  border-radius:16px;
+  font-size:25px;
+}
+
+.doctor-card h3 {font-size:14px}
+.doctor-card small {color:var(--muted);font-size:11px}
+.doctor-description {
+  color:#758592;
+  font-size:12px;
+  line-height:2;
+  min-height:48px;
+  margin:12px 0;
+}
+
+.doctor-info {
+  border-top:1px solid var(--border);
+  padding-top:13px;
+  margin-bottom:13px;
+  display:flex;
+  justify-content:space-between;
+  color:var(--muted);
+  font-size:11px;
+}
+
+.modal-overlay {
+  position:fixed;
+  inset:0;
+  background:rgba(12,32,45,.55);
+  z-index:100;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:15px;
+}
+
+.modal-overlay.show {display:flex}
+
+.modal {
+  background:white;
+  width:100%;
+  max-width:530px;
+  border-radius:18px;
+  padding:25px;
+  max-height:90vh;
+  overflow:auto;
+  animation:appear .2s ease;
+}
+
+@keyframes appear {
+  from {transform:translateY(15px);opacity:0}
+  to {transform:translateY(0);opacity:1}
+}
+
+.modal-header {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:22px;
+}
+
+.modal-header h3 {font-size:17px}
+.close-modal {
+  width:32px;height:32px;
+  border-radius:8px;
+  background:#f0f3f5;
+}
+
+.form-grid {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:14px;
+}
+
+.form-group {margin-bottom:14px}
+.form-group.full {grid-column:1/-1}
+
+.form-group label {
+  display:block;
+  font-size:12px;
+  margin-bottom:8px;
+  font-weight:600;
+}
+
+.form-group input,.form-group textarea,.form-group select {
+  width:100%;
+  padding:12px;
+  border:1px solid var(--border);
+  border-radius:9px;
+  outline:0;
+  font-size:12px;
+  background:#fafcfd;
+}
+
+.form-group input:focus,.form-group textarea:focus {
+  border-color:var(--primary);
+}
+
+.form-group textarea {resize:vertical;min-height:80px}
+
+.modal-footer {
+  display:flex;
+  gap:10px;
+  justify-content:flex-end;
+  margin-top:12px;
+}
+
+.slots {
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+  margin:15px 0;
+}
+
+.slot {
+  border:1px solid var(--border);
+  background:#f8fafb;
+  padding:12px 5px;
+  border-radius:9px;
+  font-size:12px;
+  text-align:center;
+}
+
+.slot.available {color:var(--success);border-color:#c6eadb}
+.slot.reserved {background:#fff0f1;color:var(--danger);border-color:#f4d1d4}
+.slot.selected {background:var(--primary);color:white;border-color:var(--primary)}
+
+.toast {
+  position:fixed;
+  bottom:25px;
+  left:25px;
+  background:#173e50;
+  color:white;
+  padding:14px 20px;
+  border-radius:11px;
+  font-size:12px;
+  z-index:200;
+  display:none;
+  box-shadow:var(--shadow);
+}
+
+.loading {opacity:.55;pointer-events:none}
+
+.patient-hero {
+  background:linear-gradient(120deg,#123e55,#177b8d);
+  color:white;
+  border-radius:18px;
+  padding:32px;
+  margin-bottom:25px;
+  position:relative;
+  overflow:hidden;
+}
+
+.patient-hero h2 {font-size:23px;margin-bottom:10px}
+.patient-hero p {font-size:12px;color:#d0e8ec;line-height:2}
+
+.hero-search {
+  margin-top:20px;
+  display:flex;
+  max-width:450px;
+  background:white;
+  border-radius:10px;
+  padding:5px;
+}
+
+.hero-search input {
+  flex:1;border:0;outline:0;
+  padding:10px;
+  min-width:0;
+  font-size:12px;
+}
+
+.hero-search button {
+  background:var(--secondary);
+  color:white;
+  padding:0 17px;
+  border-radius:8px;
+}
+
+.schedule-title {
+  font-size:13px;
+  margin:20px 0 10px;
+}
+
+footer {
+  text-align:center;
+  color:#9aa9b4;
+  font-size:11px;
+  padding:25px 0;
+}
+
+@media(max-width:1100px) {
+  .stats {grid-template-columns:repeat(2,1fr)}
+  .doctor-grid {grid-template-columns:repeat(2,1fr)}
+}
+
+@media(max-width:750px) {
+  .sidebar {width:65px;padding:18px 8px}
+  .logo {justify-content:center;padding:5px 0 25px}
+  .logo span,.nav-btn span,.menu-title,.sidebar-bottom .nav-btn span {display:none}
+  .nav-btn {justify-content:center;padding:14px 5px}
+  .main {margin-right:65px;width:calc(100% - 65px);padding:18px 13px}
+  .topbar {align-items:flex-start;flex-wrap:wrap}
+  .page-title h1 {font-size:18px}
+  .top-actions {width:100%;justify-content:space-between}
+  .stats {gap:10px}
+  .stat-card {padding:13px}
+  .stat-card h2 {font-size:21px}
+  .stat-icon {width:38px;height:38px}
+  .doctor-grid {grid-template-columns:1fr}
+  .search-box {width:100%}
+  .panel {padding:15px}
+  .panel-header {flex-wrap:wrap}
+  .form-grid {grid-template-columns:1fr}
+  .form-group.full {grid-column:auto}
+  .patient-hero {padding:22px}
+  .patient-hero h2 {font-size:18px}
+}
+</style>
+</head>
+
+<body>
+
+<div class="layout">
+
+<aside class="sidebar">
+  <div class="logo">
+    <div class="logo-icon"><i class="fa-solid fa-heart-pulse"></i></div>
+    <span>مدیکال پلاس</span>
+  </div>
+
+  <div class="menu-title">منوی اصلی</div>
+
+  <button class="nav-btn active" onclick="switchPage('dashboard',this)">
+    <i class="fa-solid fa-chart-pie"></i><span>داشبورد مدیریت</span>
+  </button>
+
+  <button class="nav-btn" onclick="switchPage('doctors',this)">
+    <i class="fa-solid fa-user-doctor"></i><span>مدیریت پزشکان</span>
+  </button>
+
+  <button class="nav-btn" onclick="switchPage('patients',this)">
+    <i class="fa-solid fa-calendar-check"></i><span>رزرو نوبت</span>
+  </button>
+
+  <div class="sidebar-bottom">
+    <button class="nav-btn" onclick="refreshData()">
+      <i class="fa-solid fa-rotate"></i><span>بروزرسانی اطلاعات</span>
+    </button>
+  </div>
+</aside>
+
+<main class="main">
+
+<header class="topbar">
+  <div class="page-title">
+    <h1 id="headerTitle">داشبورد مدیریت</h1>
+    <p id="headerSubtitle">به پنل مدیریت مدیکال پلاس خوش آمدید</p>
+  </div>
+
+  <div class="top-actions">
+    <div class="mode-switch">
+      <button id="adminMode" class="active" onclick="setMode('admin')">مدیریت</button>
+      <button id="patientMode" onclick="setMode('patient')">بیماران</button>
+    </div>
+    <div class="avatar"><i class="fa-solid fa-user"></i></div>
+  </div>
+</header>
+
+<!-- ADMIN DASHBOARD -->
+<section id="dashboard" class="section active">
+
+  <div class="stats">
+    <div class="stat-card">
+      <div><p>تعداد پزشکان</p><h2 id="statDoctors">۰</h2></div>
+      <div class="stat-icon blue"><i class="fa-solid fa-user-doctor"></i></div>
+    </div>
+
+    <div class="stat-card">
+      <div><p>کل نوبت‌ها</p><h2 id="statSlots">۰</h2></div>
+      <div class="stat-icon green"><i class="fa-solid fa-calendar-check"></i></div>
+    </div>
+
+    <div class="stat-card">
+      <div><p>نوبت‌های رزرو شده</p><h2 id="statReserved">۰</h2></div>
+      <div class="stat-icon orange"><i class="fa-solid fa-clock"></i></div>
+    </div>
+
+    <div class="stat-card">
+      <div><p>نوبت‌های آزاد</p><h2 id="statAvailable">۰</h2></div>
+      <div class="stat-icon purple"><i class="fa-solid fa-calendar-plus"></i></div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-header">
+      <h3><i class="fa-solid fa-users" style="color:var(--primary)"></i> آخرین پزشکان ثبت شده</h3>
+      <button class="btn btn-primary" onclick="openDoctorModal()">
+        <i class="fa-solid fa-plus"></i> افزودن پزشک
+      </button>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>پزشک</th>
+            <th>شماره تماس</th>
+            <th>آدرس</th>
+            <th>نوبت‌ها</th>
+            <th>عملیات</th>
+          </tr>
+        </thead>
+        <tbody id="dashboardDoctors"></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- DOCTOR MANAGEMENT -->
+<section id="doctors" class="section">
+  <div class="panel">
+    <div class="panel-header">
+      <h3>لیست پزشکان</h3>
+      <button class="btn btn-primary" onclick="openDoctorModal()">
+        <i class="fa-solid fa-plus"></i> پزشک جدید
+      </button>
+    </div>
+
+    <div class="search-box" style="margin-bottom:20px">
+      <i class="fa-solid fa-search"></i>
+      <input id="adminSearch" placeholder="جستجوی نام پزشک..." oninput="renderAdminDoctors()">
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>پزشک</th>
+            <th>شماره تماس</th>
+            <th>آدرس</th>
+            <th>تعداد نوبت</th>
+            <th>وضعیت</th>
+            <th>عملیات</th>
+          </tr>
+        </thead>
+        <tbody id="doctorsTable"></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- PATIENT PAGE -->
+<section id="patients" class="section">
+
+  <div class="patient-hero">
+    <h2>سلامتی شما، اولویت ماست 💙</h2>
+    <p>پزشک مورد نظر خود را پیدا کنید و در چند ثانیه نوبت خود را رزرو کنید.</p>
+
+    <div class="hero-search">
+      <input id="patientSearch" placeholder="نام پزشک یا آدرس را وارد کنید..." oninput="renderPatientDoctors()">
+      <button onclick="renderPatientDoctors()"><i class="fa-solid fa-search"></i></button>
+    </div>
+  </div>
+
+  <div class="panel-header">
+    <h3>پزشکان ما</h3>
+    <span style="font-size:12px;color:var(--muted)" id="doctorCount"></span>
+  </div>
+
+  <div class="doctor-grid" id="patientDoctors"></div>
+</section>
+
+<footer>© تمامی حقوق برای سامانه مدیکال پلاس محفوظ است.</footer>
+
+</main>
+</div>
+
+<!-- DOCTOR MODAL -->
+<div class="modal-overlay" id="doctorModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="doctorModalTitle">افزودن پزشک جدید</h3>
+      <button class="close-modal" onclick="closeModal('doctorModal')"><i class="fa-solid fa-times"></i></button>
+    </div>
+
+    <form id="doctorForm">
+      <input type="hidden" id="doctorId">
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label>نام پزشک *</label>
+          <input id="doctorName" maxlength="100" required placeholder="نام و نام خانوادگی">
+        </div>
+
+        <div class="form-group">
+          <label>شماره تماس</label>
+          <input id="doctorPhone" maxlength="11" placeholder="09123456789">
+        </div>
+
+        <div class="form-group full">
+          <label>آدرس مطب *</label>
+          <input id="doctorAddress" maxlength="800" required placeholder="آدرس کامل مطب">
+        </div>
+
+        <div class="form-group full">
+          <label>توضیحات و تخصص پزشک</label>
+          <textarea id="doctorDescription" maxlength="800" placeholder="توضیحات پزشک..."></textarea>
+        </div>
+
+        <div class="form-group full" id="scheduleGroup">
+          <label>ساعت‌های کاری (اختیاری)</label>
+          <input id="doctorSchedule" placeholder="مثلاً 09:00-09:30, 10:00-10:30">
+          <small style="color:var(--muted);font-size:10px">هر بازه را با کاما جدا کن. در ویرایش، برنامه نوبت‌ها از قبل موجود حفظ می‌شود.</small>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-light" onclick="closeModal('doctorModal')">انصراف</button>
+        <button type="submit" class="btn btn-primary" id="saveDoctorBtn">ذخیره پزشک</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- RESERVATION MODAL -->
+<div class="modal-overlay" id="reserveModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>رزرو نوبت پزشک</h3>
+      <button class="close-modal" onclick="closeModal('reserveModal')"><i class="fa-solid fa-times"></i></button>
+    </div>
+
+    <div id="reserveDoctorInfo"></div>
+
+    <div class="form-group" style="margin-top:20px">
+      <label>نام و نام خانوادگی بیمار</label>
+      <input id="patientName" maxlength="100" placeholder="نام خود را وارد کنید">
+    </div>
+
+    <h4 class="schedule-title">زمان‌های قابل رزرو</h4>
+    <div class="slots" id="reservationSlots"></div>
+
+    <div class="modal-footer">
+      <button class="btn btn-light" onclick="closeModal('reserveModal')">بستن</button>
+      <button class="btn btn-primary" id="confirmReservation" onclick="confirmReserve()">تأیید رزرو</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// آدرس سرور FastAPI خود را اینجا وارد کن
+const API_BASE = "http://127.0.0.1:8000";
+
+let doctors = [];
+let selectedDoctor = null;
+let selectedSlot = null;
+
+const $ = id => document.getElementById(id);
+
+function notify(message) {
+  const toast = $('toast');
+  toast.textContent = message;
+  toast.style.display = 'block';
+  clearTimeout(window.toastTimer);
+  window.toastTimer = setTimeout(() => toast.style.display = 'none', 3500);
+}
+
+function digits(number) {
+  return String(number).replace(/\d/g, d => '۰۱۲۳۴۵۶۷۸۹'[d]);
+}
+
+function escapeHTML(value) {
+  return String(value ?? '').replace(/[&<>"']/g, c => ({
+    '&':'&amp;', '<':'&lt;', '>':'&gt;',
+    '"':'&quot;', "'":'&#39;'
+  })[c]);
+}
+
+async function api(path, options = {}) {
+  const config = {
+    ...options,
+    headers: {
+      ...(options.body ? {'Content-Type':'application/json'} : {}),
+      ...options.headers
+    }
+  };
+
+  const response = await fetch(API_BASE + path, config);
+
+  if (!response.ok) {
+    let message = `خطای سرور (${response.status})`;
+    try {
+      const data = await response.json();
+      message = Array.isArray(data.detail)
+        ? data.detail.map(e => e.msg).join(' - ')
+        : (data.detail || data.message || message);
+    } catch {}
+    throw new Error(message);
+  }
+
+  if (response.status === 204) return null;
+  const type = response.headers.get('content-type') || '';
+  return type.includes('application/json') ? response.json() : null;
+}
+
+function getSlots(doctor) {
+  return Array.isArray(doctor.schedule) ? doctor.schedule : [];
+}
+
+function isReserved(slot) {
+  return slot.is_reserved === true || !!slot.reserved_by;
+}
+
+function formatNumber(n) {
+  return digits(n);
+}
+
+// Load doctors
+async function loadDoctors() {
+  try {
+    doctors = await api('/doctors');
+    if (!Array.isArray(doctors)) doctors = [];
+    renderAll();
+  } catch (error) {
+    notify('دریافت اطلاعات ناموفق بود: ' + error.message);
+  }
+}
+
+function renderAll() {
+  renderStats();
+  renderAdminDoctors();
+  renderPatientDoctors();
+  renderDashboard();
+}
+
+function renderStats() {
+  const slots = doctors.flatMap(getSlots);
+  const reserved = slots.filter(isReserved).length;
+
+  $('statDoctors').textContent = formatNumber(doctors.length);
+  $('statSlots').textContent = formatNumber(slots.length);
+  $('statReserved').textContent = formatNumber(reserved);
+  $('statAvailable').textContent = formatNumber(slots.length - reserved);
+}
+
+function doctorAvatar() {
+  return '<i class="fa-solid fa-user-doctor"></i>';
+}
+
+function renderDashboard() {
+  const list = doctors.slice(-5).reverse();
+
+  $('dashboardDoctors').innerHTML = list.length ? list.map(d => `
+    <tr>
+      <td>
+        <div class="doctor-cell">
+          <div class="doctor-avatar">${doctorAvatar()}</div>
+          <strong>${escapeHTML(d.name)}</strong>
+        </div>
+      </td>
+      <td>${escapeHTML(d.phone_number || '-')}</td>
+      <td>${escapeHTML(d.address || '-')}</td>
+      <td>${formatNumber(getSlots(d).length)}</td>
+      <td>
+        <button class="icon-btn" onclick="editDoctor(${d.id})"><i class="fa-solid fa-pen"></i></button>
+      </td>
+    </tr>
+  `).join('') : emptyRow(5, 'هنوز پزشکی ثبت نشده است');
+}
+
+function emptyRow(cols, message) {
+  return `<tr><td colspan="${cols}" class="empty">${message}</td></tr>`;
+}
+
+function renderAdminDoctors() {
+  const query = ($('adminSearch')?.value || '').trim().toLowerCase();
+
+  const list = doctors.filter(d =>
+    (d.name || '').toLowerCase().includes(query)
+  );
+
+  $('doctorsTable').innerHTML = list.length ? list.map(d => {
+    const slots = getSlots(d);
+    const reserved = slots.filter(isReserved).length;
+
+    return `
+      <tr>
+        <td>
+          <div class="doctor-cell">
+            <div class="doctor-avatar">${doctorAvatar()}</div>
+            <strong>${escapeHTML(d.name)}</strong>
+          </div>
+        </td>
+        <td>${escapeHTML(d.phone_number || '-')}</td>
+        <td>${escapeHTML(d.address || '-')}</td>
+        <td>${formatNumber(slots.length)}</td>
+        <td><span class="badge ${reserved ? 'badge-green':'badge-red'}">${reserved ? 'دارای رزرو':'بدون رزرو'}</span></td>
+        <td>
+          <div class="actions">
+            <button class="icon-btn" title="ویرایش" onclick="editDoctor(${d.id})"><i class="fa-solid fa-pen"></i></button>
+            <button class="icon-btn delete" title="حذف" onclick="deleteDoctor(${d.id})"><i class="fa-solid fa-trash"></i></button>
+          </div>
+        </td>
+      </tr>
+    `;
+  }).join('') : emptyRow(6, 'پزشکی پیدا نشد');
+}
+
+function renderPatientDoctors() {
+  const query = ($('patientSearch')?.value || '').trim().toLowerCase();
+
+  const list = doctors.filter(d =>
+    (d.name || '').toLowerCase().includes(query) ||
+    (d.address || '').toLowerCase().includes(query) ||
+    (d.description || '').toLowerCase().includes(query)
+  );
+
+  $('doctorCount').textContent = formatNumber(list.length) + ' پزشک';
+
+  $('patientDoctors').innerHTML = list.length ? list.map(d => {
+    const slots = getSlots(d);
+    const available = slots.filter(s => !isReserved(s)).length;
+
+    return `
+      <div class="doctor-card">
+        <div class="doctor-card-top">
+          <div class="big-avatar">${doctorAvatar()}</div>
+          <div>
+            <h3>${escapeHTML(d.name)}</h3>
+            <small>${escapeHTML(d.phone_number || 'شماره تماس ثبت نشده')}</small>
+          </div>
+        </div>
+
+        <p class="doctor-description">${escapeHTML(d.description || 'اطلاعات بیشتری برای این پزشک ثبت نشده است.')}</p>
+
+        <div class="doctor-info">
+          <span><i class="fa-solid fa-location-dot"></i> ${escapeHTML(d.address || '-')}</span>
+        </div>
+
+        <div class="doctor-info">
+          <span>نوبت‌های آزاد</span>
+          <strong style="color:var(--success)">${formatNumber(available)} نوبت</strong>
+        </div>
+
+        <button class="btn btn-primary" style="width:100%" onclick="openReserve(${d.id})">
+          <i class="fa-solid fa-calendar-check"></i> مشاهده و رزرو نوبت
+        </button>
+      </div>
+    `;
+  }).join('') : `<div class="empty" style="grid-column:1/-1">پزشکی یافت نشد.</div>`;
+}
+
+// Navigation
+function switchPage(page, button) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  $(page).classList.add('active');
+
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  if (button) button.classList.add('active');
+
+  const titles = {
+    dashboard:['داشبورد مدیریت','مدیریت سامانه نوبت‌دهی'],
+    doctors:['مدیریت پزشکان','مشاهده و مدیریت اطلاعات پزشکان'],
+    patients:['رزرو نوبت','انتخاب پزشک و رزرو نوبت']
+  };
+
+  $('headerTitle').textContent = titles[page][0];
+  $('headerSubtitle').textContent = titles[page][1];
+}
+
+function setMode(mode) {
+  $('adminMode').classList.toggle('active', mode === 'admin');
+  $('patientMode').classList.toggle('active', mode === 'patient');
+
+  if (mode === 'admin') {
+    switchPage('dashboard', document.querySelector('.sidebar .nav-btn'));
+  } else {
+    switchPage('patients', document.querySelectorAll('.sidebar .nav-btn')[2]);
+  }
+}
+
+// Modal functions
+function openDoctorModal(id = null) {
+  $('doctorForm').reset();
+  $('doctorId').value = id || '';
+  $('doctorModalTitle').textContent = id ? 'ویرایش اطلاعات پزشک' : 'افزودن پزشک جدید';
+  $('saveDoctorBtn').textContent = id ? 'ذخیره تغییرات' : 'ثبت پزشک';
+
+  const scheduleGroup = $('scheduleGroup');
+  scheduleGroup.style.display = id ? 'none' : 'block';
+
+  if (id) {
+    const d = doctors.find(x => x.id === id);
+    if (!d) return;
+
+    $('doctorName').value = d.name || '';
+    $('doctorPhone').value = d.phone_number || '';
+    $('doctorAddress').value = d.address || '';
+    $('doctorDescription').value = d.description || '';
+  }
+
+  $('doctorModal').classList.add('show');
+}
+
+function closeModal(id) {
+  $(id).classList.remove('show');
+}
+
+function editDoctor(id) {
+  openDoctorModal(id);
+}
+
+function parseSchedule(value) {
+  if (!value.trim()) return [];
+
+  return value.split(',').map(item => item.trim()).filter(Boolean).map(item => {
+    const parts = item.split('-').map(x => x.trim());
+    if (parts.length !== 2 || !parts[0] || !parts[1]) {
+      throw new Error('فرمت ساعت کاری صحیح نیست. نمونه: 09:00-09:30');
+    }
+
+    return {
+      start:parts[0],
+      end:parts[1],
+      reserved_by:null,
+      is_reserved:false
+    };
+  });
+}
+
+// Create / Update doctor
+$('doctorForm').addEventListener('submit', async e => {
+  e.preventDefault();
+
+  const id = $('doctorId').value;
+
+  const data = {
+    name:$('doctorName').value.trim(),
+    phone_number:$('doctorPhone').value.trim(),
+    address:$('doctorAddress').value.trim(),
+    description:$('doctorDescription').value.trim()
+  };
+
+  if (!data.name || !data.address) {
+    notify('نام و آدرس پزشک الزامی است');
+    return;
+  }
+
+  if (data.phone_number.length > 11) {
+    notify('شماره تماس نباید بیشتر از ۱۱ رقم باشد');
+    return;
+  }
+
+  try {
+    if (id) {
+      await api(`/doctors/${id}/update`, {
+        method:'PATCH',
+        body:JSON.stringify(data)
+      });
+      notify('اطلاعات پزشک با موفقیت ویرایش شد');
+    } else {
+      data.schedule = parseSchedule($('doctorSchedule').value);
+      await api('/create', {
+        method:'POST',
+        body:JSON.stringify(data)
+      });
+      notify('پزشک با موفقیت ثبت شد');
+    }
+
+    closeModal('doctorModal');
+    await loadDoctors();
+
+  } catch(error) {
+    notify(error.message);
+  }
+});
+
+// Delete doctor
+async function deleteDoctor(id) {
+  const doctor = doctors.find(d => d.id === id);
+  if (!doctor) return;
+
+  if (!confirm(`آیا از حذف پزشک ${doctor.name} مطمئن هستید؟`)) return;
+
+  try {
+    await api(`/doctors/${id}/delete`, {method:'DELETE'});
+    notify('پزشک حذف شد');
+    await loadDoctors();
+  } catch(error) {
+    notify(error.message);
+  }
+}
+
+// Reservation
+function openReserve(id) {
+  const doctor = doctors.find(d => d.id === id);
+  if (!doctor) return;
+
+  selectedDoctor = doctor;
+  selectedSlot = null;
+
+  $('patientName').value = '';
+  $('reserveDoctorInfo').innerHTML = `
+    <div class="doctor-cell">
+      <div class="big-avatar">${doctorAvatar()}</div>
+      <div>
+        <strong>${escapeHTML(doctor.name)}</strong>
+        <p style="font-size:11px;color:var(--muted);margin-top:5px">${escapeHTML(doctor.address || '')}</p>
+      </div>
+    </div>
+  `;
+
+  renderReservationSlots();
+  $('reserveModal').classList.add('show');
+}
+
+function renderReservationSlots() {
+  const slots = getSlots(selectedDoctor);
+
+  $('reservationSlots').innerHTML = slots.length ? slots.map((slot,index) => {
+    const reserved = isReserved(slot);
+
+    return `
+      <button
+        class="slot ${reserved ? 'reserved':'available'}"
+        ${reserved ? 'disabled' : ''}
+        onclick="selectSlot(${index},this)">
+        <div>${escapeHTML(slot.start)} تا ${escapeHTML(slot.end)}</div>
+        <small>${reserved ? 'رزرو شده':'آزاد'}</small>
+      </button>
+    `;
+  }).join('') : `<div class="empty" style="grid-column:1/-1">برنامه نوبتی برای این پزشک ثبت نشده است.</div>`;
+}
+
+function selectSlot(index, element) {
+  selectedSlot = index;
+
+  document.querySelectorAll('.slot').forEach(s => s.classList.remove('selected'));
+  element.classList.add('selected');
+}
+
+async function confirmReserve() {
+  if (!selectedDoctor || selectedSlot === null) {
+    notify('لطفاً یک ساعت را انتخاب کنید');
+    return;
+  }
+
+  const name = $('patientName').value.trim();
+  if (!name) {
+    notify('نام بیمار را وارد کنید');
+    return;
+  }
+
+  const slot = getSlots(selectedDoctor)[selectedSlot];
+  if (!slot || isReserved(slot)) {
+    notify('این نوبت دیگر در دسترس نیست');
+    await loadDoctors();
+    return;
+  }
+
+  try {
+    await api(`/doctors/${selectedDoctor.id}/reserve`, {
+      method:'POST',
+      body:JSON.stringify({
+        name:name,
+        start:slot.start
+      })
+    });
+
+    notify('نوبت شما با موفقیت رزرو شد');
+    closeModal('reserveModal');
+    selectedSlot = null;
+    await loadDoctors();
+
+  } catch(error) {
+    notify(error.message);
+    await loadDoctors();
+  }
+}
+
+// Cancel reservation from admin
+async function cancelReservation(id, slot) {
+  const name = slot.reserved_by;
+
+  if (!name) {
+    notify('نام رزروکننده در اطلاعات نوبت موجود نیست');
+    return;
+  }
+
+  if (!confirm(`رزرو ${name} لغو شود؟`)) return;
+
+  try {
+    await api(`/doctors/${id}/cancel`, {
+      method:'DELETE',
+      body:JSON.stringify({
+        name:name,
+        start:slot.start
+      })
+    });
+
+    notify('رزرو لغو شد');
+    await loadDoctors();
+  } catch(error) {
+    notify(error.message);
+  }
+}
+
+async function refreshData() {
+  await loadDoctors();
+  notify('اطلاعات بروزرسانی شد');
+}
+
+// Initial load
+loadDoctors();
+
+// Close modals when clicking outside
+document.querySelectorAll('.modal-overlay').forEach(modal => {
+  modal.addEventListener('click', e => {
+    if (e.target === modal) modal.classList.remove('show');
+  });
+});
+</script>
+
+</body>
+</html>
